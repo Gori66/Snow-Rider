@@ -16,7 +16,7 @@ public class ChunkObstacles : MonoBehaviour
             // Spawne Hindernisse verteilt über die Länge des Chunks
             float randomZ = Random.Range(-chunkLength / 2f, chunkLength / 2f); 
 
-            Vector3 localSpawnPos = new Vector3(randomX, 1f, randomZ);
+            Vector3 localSpawnPos = new Vector3(randomX, 0f, randomZ);
             
             // Instanziieren als Kindelement des Chunks, damit es sich mitbewegt
             GameObject obstacle = Instantiate(obstaclePrefab, transform);
