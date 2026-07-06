@@ -1,0 +1,262 @@
+Ein komplettes Spiel wie *Snow Rider 3D* von Grund auf zu programmieren, ist ein tolles Projekt! Da der Code für ein ganzes Spiel extrem umfangreich ist, brechen wir das Projekt in die **wichtigsten Kernkomponenten** auf, damit du direkt ein voll funktionsfähiges Fundament in Unity bauen kannst.
+
+Wir setzen genau das um, was du dir wünschst: Der Spieler bleibt auf der Z-Achse fixiert, die Welt bewegt sich auf ihn zu (Endless Runner Prinzip), der Schlitten behält seine Rotation bei, die Map generiert sich prozedural und das Ganze läuft aus der First-Person-Perspektive.
+
+---
+
+## Schritt 1: Das Unity-Projekt aufsetzen
+
+1. Öffne den **Unity Hub** und erstelle ein neues Projekt mit der Vorlage **3D (Core)**.
+2. Erstelle im `Project`-Fenster (unten) einen neuen Ordner namens `Scripts`.
+3. Erstelle in deiner Szene ein paar einfache Formen (Primitives) für die Map-Generierung:
+* Klicke in der `Hierarchy` (links) auf `+` -> `3D Object` -> `Cube`. Benenne ihn um in **GroundChunk**. Setze seine Skalierung (`Scale`) im Inspector auf `X: 20, Y: 1, Z: 50`.
+* Ziehe diesen *GroundChunk* aus der Hierarchy unten in deinen `Assets`-Ordner, um ein **Prefab** daraus zu machen. Lösche den Cube danach aus der Hierarchy.
+
+
+
+---
+
+## Schritt 2: Der Spieler & Die Steuerung (First Person)
+
+Da sich die Map auf den Spieler zubewegt, steuert der Spieler sich nur auf der **X-Achse (links/rechts)** und rotiert.
+
+1. Erstelle in der Hierarchy ein leeres Objekt (`+` -> `Create Empty`) und nenne es **Player**.
+2. Ziehe die **Main Camera** in der Hierarchy auf den *Player*, sodass sie ein Kindobjekt (Child) des Players wird. Setze die Position der Kamera im Inspector auf `X: 0, Y: 2, Z: 0`.
+3. Erstelle im Ordner `Scripts` ein neues C#-Skript namens **PlayerController**.
+4. Öffne das Skript und füge folgenden Code ein:
+
+```csharp
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    [Header("Movement Settings")]
+    public float sideSpeed = 10f;
+    public float rotationSpeed = 50f;
+    public float maxX = 8f; // Grenzen der Piste nach links und rechts
+
+    private float currentRotationY = 0f;
+
+    void Update()
+    {
+        // Input abfragen (A/D oder Pfeiltasten)
+        float moveInput = Input.GetAxis("Horizontal");
+
+        if (moveInput != 0)
+        {
+            // 1. Bewegung nach links/rechts
+            Vector3 newPosition = transform.position + new Vector3(moveInput * sideSpeed * Time.deltaTime, 0, 0);
+            newPosition.x = Mathf.Clamp(newPosition.x, -maxX, maxX); // Spieler auf der Piste halten
+            transform.position = newPosition;
+
+            // 2. Rotation anpassen (bleibt bestehen, geht nicht automatisch zurück)
+            currentRotationY += moveInput * rotationSpeed * Time.deltaTime;
+            currentRotationY = Mathf.Clamp(currentRotationY, -35f, 35f); // Maximale Drehung begrenzen
+        }
+
+        // Rotation auf das Objekt anwenden
+        transform.rotation = Quaternion.Euler(0, currentRotationY, 0);
+    }
+}
+
+```
+
+5. Speichere das Skript und ziehe es im Unity-Editor auf dein **Player**-Objekt in der Hierarchy.
+
+---
+
+## Schritt 3: Die Weltbewegung & Prozedurale Generierung
+
+Da sich der Spieler nicht vorwärts bewegt, müssen sich die Map-Teile (Chunks) auf den Spieler zubewegen und sich hinten wieder zerstören bzw. vorne neu spawnen.
+
+1. Erstelle ein neues C#-Skript namens **MapManager**.
+2. Füge folgenden Code ein:
+
+```csharp
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MapManager : MonoBehaviour
+{
+    public GameObject chunkPrefab;
+    public float scrollSpeed = 15f;
+    public int maxChunksOnScreen = 5;
+    public float chunkLength = 50f;
+
+    private List<GameObject> activeChunks = new List<GameObject>();
+    private float spawnZ = 0f;
+
+    void Start()
+    {
+        // Erste Chunks zum Start generieren
+        for (int i = 0; i < maxChunksOnScreen; i++)
+        {
+            SpawnChunk();
+        }
+    }
+
+    void Update()
+    {
+        // Bewege alle aktiven Chunks auf den Spieler zu (entgegen der Z-Achse)
+        for (int i = activeChunks.Count - 1; i >= 0; i--)
+        {
+            GameObject chunk = activeChunks[i];
+            chunk.transform.Translate(Vector3.back * scrollSpeed * Time.deltaTime, Space.World);
+
+            // Wenn ein Chunk hinter den Spieler geraten ist, löschen und neuen vorne spawnen
+            if (chunk.transform.position.z < -chunkLength)
+            {
+                activeChunks.RemoveAt(i);
+                Destroy(chunk);
+                SpawnChunk();
+            }
+        }
+    }
+
+    void SpawnChunk()
+    {
+        // Berechne die Position für den nächsten Chunk
+        Vector3 spawnPos = new Vector3(0, 0, spawnZ);
+        
+        if (activeChunks.Count > 0)
+        {
+            // Setze den neuen Chunk direkt an das Ende des am weitesten entfernten Chunks
+            float highestZ = -999f;
+            foreach (var c in activeChunks)
+            {
+                if (c.transform.position.z > highestZ) highestZ = c.transform.position.z;
+            }
+            spawnPos = new Vector3(0, 0, highestZ + chunkLength);
+        }
+
+        GameObject newChunk = Instantiate(chunkPrefab, spawnPos, Quaternion.identity);
+        activeChunks.Add(newChunk);
+        
+        // Erhöhe den Startwert für das allererste Setup
+        spawnZ += chunkLength;
+    }
+}
+
+```
+
+3. Erstelle in der Hierarchy ein leeres Objekt und nenne es **MapManager**.
+4. Ziehe das Skript **MapManager** auf dieses Objekt.
+5. Ziehe dein **GroundChunk-Prefab** aus dem Project-Fenster in das Feld `Chunk Prefab` des MapManagers im Inspector.
+
+---
+
+## Schritt 4: Hindernisse hinzufügen (Prozedural)
+
+Damit es wie *Snow Rider* wird, brauchen wir Hindernisse (wie Bäume oder Felsen) auf den Chunks.
+
+1. Erstelle ein neues 3D-Objekt (z.B. eine `Sphere` oder einen `Cube`), verkleinere es etwas und nenne es **Obstacle**.
+2. Füge eine rote Farbe (Material) hinzu, damit man es sieht.
+3. Erstelle ein neues Skript namens **ChunkObstacles**:
+
+```csharp
+using UnityEngine;
+
+public class ChunkObstacles : MonoBehaviour
+{
+    public GameObject obstaclePrefab;
+    public int numberOfObstacles = 3;
+    public float roadWidth = 8f;
+    public float chunkLength = 50f;
+
+    void Start()
+    {
+        // Generiert zufällige Hindernisse auf diesem spezifischen Streckenteil
+        for (int i = 0; i < numberOfObstacles; i++)
+        {
+            float randomX = Random.Range(-roadWidth, roadWidth);
+            // Spawne Hindernisse verteilt über die Länge des Chunks
+            float randomZ = Random.Range(-chunkLength / 2f, chunkLength / 2f); 
+
+            Vector3 localSpawnPos = new Vector3(randomX, 1f, randomZ);
+            
+            // Instanziieren als Kindelement des Chunks, damit es sich mitbewegt
+            GameObject obstacle = Instantiate(obstaclePrefab, transform);
+            obstacle.transform.localPosition = localSpawnPos;
+        }
+    }
+}
+
+```
+
+4. Klicke doppelt auf dein **GroundChunk-Prefab** im Projektordner, um es zu öffnen.
+5. Ziehe das Skript **ChunkObstacles** auf das Prefab.
+6. Mache aus deinem *Obstacle*-Objekt ebenfalls ein Prefab (in den Projektordner ziehen) und lösche es aus der Hierarchy.
+7. Weise das *Obstacle-Prefab* im Inspector des *GroundChunk-Prefabs* dem Feld `Obstacle Prefab` zu.
+
+---
+
+## Testen!
+
+Wenn du jetzt auf **Play** drückst:
+
+* Siehst du das Spiel aus der First-Person-Perspektive der Kamera.
+* Die Schneepiste und die Hindernisse bewegen sich kontinuierlich auf dich zu und generieren sich unendlich neu.
+* Wenn du `A` oder `D` drückst, bewegt sich die Kamera nach links und rechts und **bleibt** in diesem Winkel rotiert, bis du in die Gegenrichtung lenkst.
+
+Möchtest du als Nächstes wissen, wie wir das Kollisionssystem für Game Over einrichten oder wie man Bonuspunkte (Geschenke) sammelt?
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Das Phänomen, dass deine Hindernisse (Obstacles) plötzlich extrem waagrecht verzerrt oder plattgedrückt werden, liegt an einem klassischen Unity-Fehler: **Der Skalierung des Eltern-Objekts (Parent Scaling)**.
+
+### Warum passiert das?
+
+Im Skript `ChunkObstacles` instanziierst du die Hindernisse als Kindelemente des Chunks:
+
+```csharp
+GameObject obstacle = Instantiate(obstaclePrefab, transform);
+
+```
+
+Wenn ein Objekt ein Kind eines anderen Objekts wird, erbt es dessen Skalierung (**Scale**).
+Schauen wir uns die Skalierung deines `GroundChunk` an: **X: 20, Y: 1, Z: 50**.
+
+Weil die X-Achse (20) und die Z-Achse (50) extrem groß sind im Vergleich zur Y-Achse (1), wird jedes normale Kindobjekt (wie dein Würfel mit der Skalierung 1, 1, 1) mit diesen Werten multipliziert. Das Ergebnis: Das Hindernis wird in die Breite und Länge gezogen und extrem verzerrt!
+
+---
+
+### Die Lösung
+
+Es gibt zwei einfache Wege, das zu beheben. **Weg 1 ist der sauberste für die Spieleentwicklung.**
+
+#### Weg 1: Die Skalierung des Chunks auf (1, 1, 1) belassen (Empfohlen)
+
+1. Klicke doppelt auf dein **GroundChunk-Prefab** im Projektordner, um es zu öffnen.
+2. Ändere im Inspector die Skalierung (Scale) des Haupt-Prefabs (ganz oben) wieder zurück auf **X: 1, Y: 1, Z: 1**.
+3. Erstelle *innerhalb* dieses Prefabs ein neues 3D-Objekt (z.B. einen Cube), das als visueller Boden dient. Nenne es z.B. `VisualFloor`.
+4. Ändere **nur** bei diesem `VisualFloor` die Skalierung auf **X: 20, Y: 1, Z: 50**.
+5. Stelle sicher, dass das Skript `ChunkObstacles` auf dem Haupt-Prefab (das jetzt die Skalierung 1,1,1 hat) liegt.
+
+Da das Hauptobjekt nun eine neutrale Skalierung von 1 hat, werden die Hindernisse, die als Kindelemente gespawnt werden, nicht mehr verzerrt.
+
+#### Weg 2: Den Code anpassen (Die schnelle Lösung)
+
+Wenn du die Struktur des Prefabs nicht ändern möchtest, kannst du Unity im Code anweisen, die Skalierung des Hindernisses an die Welt anzupassen, anstatt die des verzerrten Chunks zu übernehmen.
+
+Ersetze in deinem Skript `ChunkObstacles` die Zeile...
+
+```csharp
+GameObject obstacle = Instantiate(obstaclePrefab, transform);
+obstacle.transform.localPosition = localSpawnPos;
+
+```
+
+...durch diesen Code:
+
+```csharp
+// Wir spawnen das Objekt zuerst ohne Elternteil an der richtigen Welt-Position
+Vector3 worldSpawnPos = transform.TransformPoint(localSpawnPos);
+GameObject obstacle = Instantiate(obstaclePrefab, worldSpawnPos, Quaternion.identity);
+
+// Jetzt machen wir es zum Kind, sagen Unity aber, dass es die Welt-Skalierung beibehalten soll
+obstacle.transform.SetParent(transform, true);
+
+```
+
+Das `true` in `SetParent(transform, true)` sorgt dafür, dass die relative Skalierung so modifiziert wird, dass das Objekt im Spiel weiterhin wie ein normaler Würfel aussieht.
+
+Probier eine der beiden Varianten aus – danach sollten deine Hindernisse wieder die perfekte Würfelform haben! Welchen Schritt (Kollisionen oder Bonuspunkte) wollen wir danach angehen?
