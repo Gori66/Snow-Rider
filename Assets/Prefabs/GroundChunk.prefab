@@ -238,7 +238,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d4f839bb3136d4b9a05d80a5cafd4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkObstacles
-  obstaclePrefab: {fileID: 2389526159223910001, guid: 7ddce402d8ef109498bac455b350adf8, type: 3}
-  numberOfObstacles: 3
+  obstaclePrefabs:
+  - {fileID: 2389526159223910001, guid: 7ddce402d8ef109498bac455b350adf8, type: 3}
+  - {fileID: 1374242158616958677, guid: 627dd548b28e0a5459de1e9c07ed8a59, type: 3}
+  - {fileID: 8233073265340715255, guid: c2ff55874e6b8d2478012a636a43b7b6, type: 3}
+  numberOfObstacles: 12
   roadWidth: 12
   chunkLength: 50
+  minDistanceBetweenObstacles: 5
+  maxSpawnAttempts: 20

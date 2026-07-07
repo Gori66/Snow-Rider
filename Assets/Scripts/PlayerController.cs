@@ -4,11 +4,14 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float forwardSpeed = 10f; // Wie stark seitlich basierend auf Blickrichtung
     public float rotationSpeed = 50f;
     public float maxX = 8f; // Grenzen der Piste nach links und rechts
-    public float maxAngle = 90f; // Maximale Neigung der Kamera nach links und rechts
+    public float maxRotation = 90f; // Maximale Neigung der Kamera nach links und rechts
 
+    [Header("Referenz zur Weltgeschwindigkeit")]
+    public MapManager mapManager;
+
+    
     [Header("Jump Settings")]
     public float jumpForce = 8f;
     public float gravity = -20f;
@@ -42,17 +45,17 @@ public class PlayerController : MonoBehaviour
         {
             // Rotation anpassen
             currentRotationY += moveInput * rotationSpeed * Time.deltaTime;
-            currentRotationY = Mathf.Clamp(currentRotationY, -maxAngle, maxAngle);
+            currentRotationY = Mathf.Clamp(currentRotationY, -maxRotation, maxRotation);
         }
 
         // Rotation anwenden
         transform.rotation = Quaternion.Euler(0, currentRotationY, 0);
 
-        // Bewegung basierend auf der Blickrichtung
-        Vector3 forwardDir = transform.forward;
-        float lateralMovement = forwardDir.x * forwardSpeed * Time.deltaTime;
+        // Seitliche Geschwindigkeit = "Vorwärtsgeschwindigkeit" (scrollSpeed) * tan(Winkel)
+        float referenceForwardSpeed = mapManager.scrollSpeed;
+        float lateralSpeed = referenceForwardSpeed * Mathf.Tan(currentRotationY * Mathf.Deg2Rad);
         
-        Vector3 newPosition = transform.position + new Vector3(lateralMovement, 0, 0);
+        Vector3 newPosition = transform.position + new Vector3(lateralSpeed * Time.deltaTime, 0, 0);
         newPosition.x = Mathf.Clamp(newPosition.x, -maxX, maxX);
         transform.position = newPosition;
     }

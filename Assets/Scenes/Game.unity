@@ -482,10 +482,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37796abd850d52a4280897ed15fdab39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  forwardSpeed: 10
   rotationSpeed: 60
   maxX: 12
-  maxAngle: 60
+  maxRotation: 45
+  mapManager: {fileID: 36241209}
   jumpForce: 10
   gravity: -20
   groundY: 1
