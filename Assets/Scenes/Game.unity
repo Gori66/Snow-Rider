@@ -477,7 +477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   forwardSpeed: 10
-  rotationSpeed: 80
+  rotationSpeed: 60
   maxX: 12
   maxAngle: 60
   jumpForce: 10
