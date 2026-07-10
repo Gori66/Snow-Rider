@@ -485,7 +485,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   rotationSpeed: 60
   maxX: 12
-  maxRotation: 45
+  maxRotation: 90
   mapManager: {fileID: 36241209}
   jumpForce: 10
   gravity: -20
