@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public float rotationSpeed = 50f;
     public float maxX = 8f; // Grenzen der Piste nach links und rechts
     public float maxRotation = 90f; // Maximale Neigung der Kamera nach links und rechts
-
+    
     [Header("Referenz zur Weltgeschwindigkeit")]
     public MapManager mapManager;
 
@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     public float gravity = -20f;
     public float groundY = 2f; // Die Y-Position, auf der der Spieler "steht" (deine bisherige Kamera-Höhe)
 
-    private float currentRotationY = 0f;
+    public float currentRotationY = 0f;
     private float verticalVelocity = 0f;
     private bool isGrounded = true;
 
@@ -51,9 +51,9 @@ public class PlayerController : MonoBehaviour
         // Rotation anwenden
         transform.rotation = Quaternion.Euler(0, currentRotationY, 0);
 
-        // Seitliche Geschwindigkeit = "Vorwärtsgeschwindigkeit" (scrollSpeed) * tan(Winkel)
-        float referenceForwardSpeed = mapManager.scrollSpeed;
-        float lateralSpeed = referenceForwardSpeed * Mathf.Tan(currentRotationY * Mathf.Deg2Rad);
+        // Seitliche Geschwindigkeit als Sinus-Anteil der Basisgeschwindigkeit
+        float angleRad = currentRotationY * Mathf.Deg2Rad;
+        float lateralSpeed = mapManager.baseScrollSpeed * Mathf.Sin(angleRad);
         
         Vector3 newPosition = transform.position + new Vector3(lateralSpeed * Time.deltaTime, 0, 0);
         newPosition.x = Mathf.Clamp(newPosition.x, -maxX, maxX);

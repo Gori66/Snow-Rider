@@ -149,9 +149,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
   chunkPrefab: {fileID: 4497362415054633390, guid: 6616755e6474ce146a9e857a390d52df, type: 3}
-  scrollSpeed: 15
+  baseScrollSpeed: 15
   maxChunksOnScreen: 5
   chunkLength: 50
+  player: {fileID: 692526198}
 --- !u!4 &36241210
 Transform:
   m_ObjectHideFlags: 0
@@ -489,6 +490,7 @@ MonoBehaviour:
   jumpForce: 10
   gravity: -20
   groundY: 1
+  currentRotationY: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

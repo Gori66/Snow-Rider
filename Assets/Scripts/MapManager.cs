@@ -4,12 +4,15 @@ using UnityEngine;
 public class MapManager : MonoBehaviour
 {
     public GameObject chunkPrefab;
-    public float scrollSpeed = 15f;
+    public float baseScrollSpeed = 15f;
     public int maxChunksOnScreen = 5;
     public float chunkLength = 50f;
+    public PlayerController player;
 
     private List<GameObject> activeChunks = new List<GameObject>();
     private float spawnZ = 0f;
+
+    public float CurrentScrollSpeed { get; private set; }
 
     void Start()
     {
@@ -22,11 +25,15 @@ public class MapManager : MonoBehaviour
 
     void Update()
     {
+        // Effektive Geschwindigkeit basierend auf dem Einlenk-Winkel berechnen
+        float angleRad = player.currentRotationY * Mathf.Deg2Rad;
+        CurrentScrollSpeed = baseScrollSpeed * Mathf.Cos(angleRad);
+
         // Bewege alle aktiven Chunks auf den Spieler zu (entgegen der Z-Achse)
         for (int i = activeChunks.Count - 1; i >= 0; i--)
         {
             GameObject chunk = activeChunks[i];
-            chunk.transform.Translate(Vector3.back * scrollSpeed * Time.deltaTime, Space.World);
+            chunk.transform.Translate(Vector3.back * CurrentScrollSpeed * Time.deltaTime, Space.World);
 
             // Wenn ein Chunk hinter den Spieler geraten ist, löschen und neuen vorne spawnen
             if (chunk.transform.position.z < -chunkLength)
