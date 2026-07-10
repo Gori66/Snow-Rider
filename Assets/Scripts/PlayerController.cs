@@ -5,13 +5,11 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float rotationSpeed = 50f;
-    public float maxX = 8f; // Grenzen der Piste nach links und rechts
     public float maxRotation = 90f; // Maximale Neigung der Kamera nach links und rechts
     
     [Header("Referenz zur Weltgeschwindigkeit")]
     public MapManager mapManager;
 
-    
     [Header("Jump Settings")]
     public float jumpForce = 8f;
     public float gravity = -20f;
@@ -56,7 +54,6 @@ public class PlayerController : MonoBehaviour
         float lateralSpeed = mapManager.baseScrollSpeed * Mathf.Sin(angleRad);
         
         Vector3 newPosition = transform.position + new Vector3(lateralSpeed * Time.deltaTime, 0, 0);
-        newPosition.x = Mathf.Clamp(newPosition.x, -maxX, maxX);
         transform.position = newPosition;
     }
 

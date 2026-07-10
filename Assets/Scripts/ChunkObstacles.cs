@@ -12,6 +12,10 @@ public class ChunkObstacles : MonoBehaviour
     public float minDistanceBetweenObstacles = 3f;
     public int maxSpawnAttempts = 20; // Verhindert Endlosschleife bei zu engem Platz
 
+    [Header("Sicherheitszone um den Spieler-Start")]
+    public float playerStartSafeZone = 15f; // Kein Obstacle innerhalb dieser Distanz zum Spieler-Start (Welt-Z = 0)
+    public float playerStartZ = 0f; // Eintragen falls Player nicht bei Z=0 startet
+
     private List<Vector3> spawnedPositions = new List<Vector3>();
 
     void Start()
@@ -53,6 +57,13 @@ public class ChunkObstacles : MonoBehaviour
             float randomX = Random.Range(-roadWidth, roadWidth);
             float randomZ = Random.Range(-chunkLength / 2f, chunkLength / 2f);
             Vector3 candidate = new Vector3(randomX, 0f, randomZ);
+
+            // Welt-Position berechnen, um Abstand zum Spieler-Start (Welt-Z = 0) zu prüfen
+            float worldZ = transform.position.z + candidate.z;
+            if (Mathf.Abs(worldZ - playerStartZ) < playerStartSafeZone)
+            {
+                continue; // Zu nah am Spieler-Start -> diesen Versuch überspringen
+            }
 
             bool tooClose = false;
             foreach (var existingPos in spawnedPositions)
