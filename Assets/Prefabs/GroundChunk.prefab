@@ -244,7 +244,7 @@ MonoBehaviour:
   - {fileID: 2389526159223910001, guid: 7ddce402d8ef109498bac455b350adf8, type: 3}
   - {fileID: 1374242158616958677, guid: 627dd548b28e0a5459de1e9c07ed8a59, type: 3}
   - {fileID: 8233073265340715255, guid: c2ff55874e6b8d2478012a636a43b7b6, type: 3}
-  numberOfObstacles: 12
+  numberOfObstacles: 15
   roadWidth: 11
   chunkLength: 50
   minDistanceBetweenObstacles: 5
@@ -389,7 +389,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0155, y: 0.03, z: -0.065}
+  m_Size: {x: 0.0155, y: 0.03, z: 0.065}
   m_Center: {x: 0.0224, y: 0.015, z: -0.113}
 --- !u!65 &5481238866145906981
 BoxCollider:
@@ -410,7 +410,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.01, y: 0.03, z: -0.065}
+  m_Size: {x: 0.01, y: 0.03, z: 0.065}
   m_Center: {x: 0.0195, y: 0.015, z: 0.054}
 --- !u!65 &1143205800410832031
 BoxCollider:
@@ -581,7 +581,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0155, y: 0.03, z: -0.065}
+  m_Size: {x: 0.0155, y: 0.03, z: 0.065}
   m_Center: {x: 0.0224, y: 0.015, z: -0.113}
 --- !u!65 &7367450407473761885
 BoxCollider:
@@ -602,7 +602,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.01, y: 0.03, z: -0.065}
+  m_Size: {x: 0.01, y: 0.03, z: 0.065}
   m_Center: {x: 0.0195, y: 0.015, z: 0.054}
 --- !u!65 &5129490731869278462
 BoxCollider:
