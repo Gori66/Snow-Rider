@@ -19,7 +19,7 @@ public class ScoreManager : MonoBehaviour
         if (!isRunning) return;
 
         // Score erhöht sich proportional zur Basisgeschwindigkeit der Welt
-        currentScore += Time.deltaTime * scoreMultiplier; // *10 für "runde" Zahlen, kannst du anpassen
+        currentScore += Time.deltaTime * scoreMultiplier;
         UpdateScoreDisplay();
     }
 
