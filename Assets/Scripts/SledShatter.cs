@@ -14,19 +14,6 @@ public class SledShatter : MonoBehaviour
         foreach (Transform fragment in transform)
         {
             Rigidbody rb = fragment.gameObject.GetComponent<Rigidbody>();
-            if (rb == null)
-            {
-                rb = fragment.gameObject.AddComponent<Rigidbody>();
-            }
-
-            // Sicherstellen, dass hier ECHTE Physik greift (nicht kinematisch!)
-            rb.isKinematic = false;
-
-            Collider col = fragment.gameObject.GetComponent<Collider>();
-            if (col == null)
-            {
-                fragment.gameObject.AddComponent<BoxCollider>();
-            }
 
             // Explosion anwenden - Ursprung ist ungefähr die Mitte des Schlittens
             rb.AddExplosionForce(explosionForce, transform.position, explosionRadius, upwardModifier);
@@ -34,7 +21,5 @@ public class SledShatter : MonoBehaviour
             // Zusätzliche zufällige Rotation, damit es chaotischer aussieht
             rb.AddTorque(Random.insideUnitSphere * torqueForce, ForceMode.Impulse);
         }
-        
-        Destroy(gameObject, 5f); // Löscht das gesamte Fragment-Objekt nach 5 Sekunden
     }
 }

@@ -9,7 +9,7 @@ public class ScoreManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
 
     [Header("Einstellungen")]
-    public float scoreMultiplier = 1f; // Wie viele Punkte pro Meter zurückgelegter Strecke
+    public float scoreMultiplier = 1f; // Wie viele Punkte pro Sekunde
 
     private float currentScore = 0f;
     private bool isRunning = true;
@@ -18,7 +18,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (!isRunning) return;
 
-        // Score erhöht sich proportional zur Basisgeschwindigkeit der Welt
+        // Score erhöht sich um scoreMultiplier pro Sekunde
         currentScore += Time.deltaTime * scoreMultiplier;
         UpdateScoreDisplay();
     }

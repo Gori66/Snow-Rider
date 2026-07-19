@@ -13,10 +13,11 @@ public class PlayerCollision : MonoBehaviour
     public GameObject sledVisual; // das normale, sichtbare Schlitten-Modell (zum Ausblenden)
 
     [Header("Third-Person Crash-Kamera")]
-    public Transform cameraTransform; // deine Main Camera hierher ziehen
+    public Transform cameraTransform; // Main Camera
     public Vector3 crashCameraLocalOffset = new Vector3(0f, 3f, -6f); // hinter & über dem Schlitten
+    public float crashCameraLocalRotationX = 15f; // leicht nach unten geneigt
     public float cameraTransitionSpeed = 3f;
-    public float crashViewDuration = 2.5f; // wie lange man den Crash von außen sieht, bevor Game Over erscheint
+    public float crashViewDuration = 1f; // wie lange man den Crash von außen sieht, bevor Game Over erscheint
     
     private bool isDead = false;
 
@@ -55,19 +56,21 @@ public class PlayerCollision : MonoBehaviour
         Quaternion startLocalRot = cameraTransform.localRotation;
 
         // Zielrotation: leicht nach unten geneigt, damit man den Schlitten/die Trümmer gut sieht
-        Quaternion targetLocalRot = Quaternion.Euler(15f, 0f, 0f);
+        Quaternion targetLocalRot = Quaternion.Euler(crashCameraLocalRotationX, 0f, 0f);
 
         while (elapsed < 1f)
         {
             elapsed += Time.deltaTime * cameraTransitionSpeed;
             cameraTransform.localPosition = Vector3.Lerp(startLocalPos, crashCameraLocalOffset, elapsed);
             cameraTransform.localRotation = Quaternion.Lerp(startLocalRot, targetLocalRot, elapsed);
+            // Warten bis zum nächsten Frame
             yield return null;
         }
 
         // Kurz in der Third-Person-Ansicht verweilen, damit man die Explosion sehen kann
         yield return new WaitForSeconds(crashViewDuration);
 
+        // Game Over UI anzeigen
         int finalScore = scoreManager != null ? scoreManager.GetFinalScore() : 0;
         if (gameOverManager != null)
         {
