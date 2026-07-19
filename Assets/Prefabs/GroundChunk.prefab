@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 33f348907279ed74dac587af7cd901e7, type: 2}
+  - {fileID: 2100000, guid: 78086c1b8fd99a94aabd02e779232a0b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -244,6 +244,12 @@ MonoBehaviour:
   - {fileID: 2389526159223910001, guid: 7ddce402d8ef109498bac455b350adf8, type: 3}
   - {fileID: 1374242158616958677, guid: 627dd548b28e0a5459de1e9c07ed8a59, type: 3}
   - {fileID: 8233073265340715255, guid: c2ff55874e6b8d2478012a636a43b7b6, type: 3}
+  - {fileID: 7350622617864625755, guid: b386933da58dfd045b003a24d35f1c41, type: 3}
+  - {fileID: 7467969200497076090, guid: ed4b21830a275044ca942a0f549aa359, type: 3}
+  - {fileID: 16149282422146876, guid: 6b94678f3ad8b71499b1c4073117cf9a, type: 3}
+  - {fileID: 5985582046476059735, guid: 385edfcfcdc00bb4b8ab910e2fd0b0aa, type: 3}
+  - {fileID: 4417556168461931439, guid: dacb4eba443f46742ba198546cbe792b, type: 3}
+  - {fileID: 7231741503794124640, guid: 6a7c08610516f6448866959c09f5e6f1, type: 3}
   numberOfObstacles: 15
   roadWidth: 11
   chunkLength: 50
